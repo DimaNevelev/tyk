@@ -96,7 +96,7 @@ func TestReverseProxyRetainHost(t *testing.T) {
 				setCtxValue(req, ctx.RetainHost, true)
 			}
 
-			proxy := TykNewSingleHostReverseProxy(target, spec)
+			proxy := TykNewSingleHostReverseProxy(target, spec, nil)
 			proxy.Director(req)
 
 			if got := req.URL.String(); got != tc.wantURL {
@@ -280,7 +280,7 @@ func TestReverseProxyDnsCache(t *testing.T) {
 			}
 
 			Url, _ := url.Parse(tc.URL)
-			proxy := TykNewSingleHostReverseProxy(Url, spec)
+			proxy := TykNewSingleHostReverseProxy(Url, spec, nil)
 			recorder := httptest.NewRecorder()
 			proxy.WrappedServeHTTP(recorder, req, false)
 
@@ -338,7 +338,7 @@ func testNewWrappedServeHTTP() *ReverseProxy {
 		EnforcedTimeoutEnabled: true,
 		CircuitBreakerEnabled:  true,
 	}
-	return TykNewSingleHostReverseProxy(target, spec)
+	return TykNewSingleHostReverseProxy(target, spec, nil)
 }
 
 func TestWrappedServeHTTP(t *testing.T) {

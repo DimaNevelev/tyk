@@ -221,8 +221,8 @@ func (r *RedisCluster) ensureConnection() {
 // GetKey will retrieve a key from the database
 func (r *RedisCluster) GetKey(keyName string) (string, error) {
 	r.ensureConnection()
-	log.Debug("[STORE] Getting WAS: ", keyName)
-	log.Debug("[STORE] Getting: ", r.fixKey(keyName))
+	// log.Debug("[STORE] Getting WAS: ", keyName)
+	// log.Debug("[STORE] Getting: ", r.fixKey(keyName))
 	cluster := r.singleton()
 
 	value, err := redis.String(cluster.Do("GET", r.fixKey(keyName)))
@@ -301,7 +301,7 @@ func (r *RedisCluster) GetRawKey(keyName string) (string, error) {
 }
 
 func (r *RedisCluster) GetExp(keyName string) (int64, error) {
-	log.Debug("Getting exp for key: ", r.fixKey(keyName))
+	//	log.Debug("Getting exp for key: ", r.fixKey(keyName))
 	r.ensureConnection()
 
 	value, err := redis.Int64(r.singleton().Do("TTL", r.fixKey(keyName)))
@@ -322,8 +322,8 @@ func (r *RedisCluster) SetExp(keyName string, timeout int64) error {
 
 // SetKey will create (or update) a key value in the store
 func (r *RedisCluster) SetKey(keyName, session string, timeout int64) error {
-	log.Debug("[STORE] SET Raw key is: ", keyName)
-	log.Debug("[STORE] Setting key: ", r.fixKey(keyName))
+	//log.Debug("[STORE] SET Raw key is: ", keyName)
+	//log.Debug("[STORE] Setting key: ", r.fixKey(keyName))
 
 	r.ensureConnection()
 	_, err := r.singleton().Do("SET", r.fixKey(keyName), session)
@@ -359,7 +359,7 @@ func (r *RedisCluster) SetRawKey(keyName, session string, timeout int64) error {
 // Decrement will decrement a key in redis
 func (r *RedisCluster) Decrement(keyName string) {
 	keyName = r.fixKey(keyName)
-	log.Debug("Decrementing key: ", keyName)
+	// log.Debug("Decrementing key: ", keyName)
 	r.ensureConnection()
 	err := r.singleton().Send("DECR", keyName)
 	if err != nil {
@@ -369,12 +369,12 @@ func (r *RedisCluster) Decrement(keyName string) {
 
 // IncrementWithExpire will increment a key in redis
 func (r *RedisCluster) IncrememntWithExpire(keyName string, expire int64) int64 {
-	log.Debug("Incrementing raw key: ", keyName)
+	// log.Debug("Incrementing raw key: ", keyName)
 	r.ensureConnection()
 	// This function uses a raw key, so we shouldn't call fixKey
 	fixedKey := keyName
 	val, err := redis.Int64(r.singleton().Do("INCR", fixedKey))
-	log.Debug("Incremented key: ", fixedKey, ", val is: ", val)
+	// log.Debug("Incremented key: ", fixedKey, ", val is: ", val)
 	if val == 1 && expire != 0 {
 		log.Debug("--> Setting Expire")
 		r.singleton().Do("EXPIRE", fixedKey, expire)
